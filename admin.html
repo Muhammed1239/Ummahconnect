@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - UmmahConnect</title>
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    // ✅ Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDP01Wi0jp523In30Xk_X83iOigfI6D038",
+      authDomain: "ummahconnect-baf90.firebaseapp.com",
+      projectId: "ummahconnect-baf90",
+      storageBucket: "ummahconnect-baf90.appspot.com",
+      messagingSenderId: "700913218056",
+      appId: "1:700913218056:web:aacfb20f177993275a17bd",
+      measurementId: "G-MHSXKL0V2J"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    async function loadDashboard() {
+      document.getElementById("loginBox").style.display = "none";
+      document.getElementById("layout").style.display = "flex";
+
+      const usersCol = collection(db, "users");
+      const snapshot = await getDocs(usersCol);
+      const users = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+
+      const table = document.getElementById("usersTableBody");
+      table.innerHTML = "";
+
+      users.forEach(user => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${user.accountType === "organization" ? user.orgName : user.name}</td>
+          <td>${user.email}</td>
+          <td>${user.password || "-"}</td>
+          <td>${user.accountType}</td>
+          <td>${user.country || "-"}</td>
+          <td>${user.accountType === "organization" ? user.sector : "-"}</td>
+          <td>${user.approved}</td>
+
+          <td>
+            ${user.accountType === "organization" ? `
+              <button class="btn-approve" onclick="approveUser('${user.id}')"><i class="fa fa-check"></i></button>
+              <button class="btn-reject" onclick="rejectUser('${user.id}')"><i class="fa fa-xmark"></i></button>
+            ` : ""}
+            <button class="btn-delete" onclick="deleteUser('${user.id}')"><i class="fa fa-trash"></i></button>
+          </td>
+        `;
+        table.appendChild(row);
+      });
+    }
+
+    window.approveUser = async function(id) {
+      await updateDoc(doc(db, "users", id), { approved: true });
+      alert("Organization Approved!");
+      loadDashboard();
+    };
+
+    window.rejectUser = async function(id) {
+      await updateDoc(doc(db, "users", id), { approved: false });
+      alert("Organization Rejected!");
+      loadDashboard();
+    };
+
+    window.deleteUser = async function(id) {
+      await deleteDoc(doc(db, "users", id));
+      alert("Account Deleted!");
+      loadDashboard();
+    };
+
+    window.checkAdminLogin = function() {
+      const username = document.getElementById("adminUser").value;
+      const password = document.getElementById("adminPass").value;
+
+      if (username === "mohd" && password === "123") {
+        loadDashboard();
+      } else {
+        alert("Invalid Admin Credentials!");
+      }
+    };
+  </script>
+
+  <style>
+    /* Global Reset */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f9fb;
+      color: #333;
+    }
+
+    /* Login Box */
+    #loginBox {
+      max-width: 400px;
+      margin: 100px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    #loginBox h2 { margin-bottom: 20px; }
+    #loginBox input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    #loginBox button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    #loginBox button:hover { background: #0056b3; }
+
+    /* Layout */
+    #layout {
+      display: none;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 220px;
+      background: #1f2937;
+      color: white;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .sidebar h2 { font-size: 20px; margin-bottom: 20px; }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 10px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: background 0.3s;
+    }
+    .sidebar a:hover { background: #374151; }
+
+    /* Main */
+    .main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    .navbar {
+      background: white;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    th, td {
+      padding: 14px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    th { background: #f3f4f6; }
+    tr:hover { background: #f9fafb; }
+
+    /* Buttons */
+    .btn-approve { background: #22c55e; color: white; }
+    .btn-reject { background: #f59e0b; color: white; }
+    .btn-delete { background: #ef4444; color: white; }
+    button {
+      border: none;
+      padding: 8px 10px;
+      margin: 2px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+
+  <!-- Admin Login -->
+  <div id="loginBox">
+    <h2><i class="fa fa-user-shield"></i> Admin Login</h2>
+    <input type="text" id="adminUser" placeholder="Username">
+    <input type="password" id="adminPass" placeholder="Password">
+    <button onclick="checkAdminLogin()">Login</button>
+  </div>
+
+  <!-- Dashboard Layout -->
+  <div id="layout">
+    <div class="sidebar">
+      <h2><i class="fa fa-shield"></i> Admin</h2>
+      <a href="#"><i class="fa fa-users"></i> Users</a>
+      <a href="#"><i class="fa fa-building"></i> Organizations</a>
+      <a href="#"><i class="fa fa-gear"></i> Settings</a>
+    </div>
+
+    <div class="main">
+      <div class="navbar">
+        <h2>Admin Dashboard</h2>
+        <button onclick="location.reload()"><i class="fa fa-right-from-bracket"></i> Logout</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Password</th>
+            <th>Type</th>
+            <th>Country</th>
+            <th>Sector</th>
+            <th>Approved</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="usersTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</body>
+</html>

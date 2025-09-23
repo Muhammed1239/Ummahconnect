@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile | UmmahConnect</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/feather-icons"></script>
+<style>
+  body { background-color: #F3F4F6; font-family: 'Inter', sans-serif; }
+  .fade-slide { opacity: 0; transform: translateY(20px); animation: fadeSlideIn 0.8s forwards; }
+  @keyframes fadeSlideIn { to { opacity: 1; transform: translateY(0); } }
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #6366F1;
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+    transition: all 0.3s ease-in-out;
+  }
+  .btn-primary { background-color: #6366F1; transition: all 0.3s; }
+  .btn-primary:hover { background-color: #4F46E5; transform: translateY(-2px); }
+</style>
+</head>
+<body class="flex flex-col min-h-screen">
+
+<!-- Navbar -->
+<header class="bg-white shadow-md">
+  <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
+    <a href="feed.html" class="text-2xl font-bold text-indigo-600 hover:text-indigo-800">UmmahConnect</a>
+    <nav class="space-x-6 hidden md:flex">
+      <a href="feed.html" class="text-gray-700 hover:text-indigo-600 transition">Feed</a>
+      <a href="discussion.html" class="text-gray-700 hover:text-indigo-600 transition">Discussion</a>
+      <a href="profile.html" class="text-gray-700 hover:text-indigo-600 transition font-semibold">Profile</a>
+      <button id="logoutBtn" class="text-gray-700 hover:text-red-500 transition">Logout</button>
+    </nav>
+    <div class="md:hidden">
+      <button id="menuBtn" class="text-gray-700 focus:outline-none"><i data-feather="menu"></i></button>
+    </div>
+  </div>
+  <div id="mobileMenu" class="hidden flex-col space-y-2 p-4 bg-white shadow-md">
+    <a href="feed.html" class="text-gray-700 hover:text-indigo-600 transition block">Feed</a>
+    <a href="discussion.html" class="text-gray-700 hover:text-indigo-600 transition block">Discussion</a>
+    <a href="profile.html" class="text-gray-700 hover:text-indigo-600 transition block font-semibold">Profile</a>
+    <button id="mobileLogoutBtn" class="text-gray-700 hover:text-red-500 transition block text-left">Logout</button>
+  </div>
+</header>
+
+<!-- Profile Form -->
+<div class="flex-grow max-w-4xl mx-auto p-6 fade-slide">
+  <h1 class="text-4xl font-bold text-indigo-600 mb-8 text-center">My Profile</h1>
+  <form id="profileForm" class="bg-white p-8 rounded-3xl shadow-xl space-y-6 transition-all duration-500">
+    
+    <!-- Name & Email -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">Name</label>
+        <input type="text" id="name" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm focus:ring-1 focus:ring-indigo-500" required>
+      </div>
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">Email</label>
+        <input type="email" id="email" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm bg-gray-100" required disabled>
+      </div>
+    </div>
+
+    <!-- Organization Fields -->
+    <div id="orgFields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">Organization Name</label>
+        <input type="text" id="orgName" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
+      </div>
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">Country</label>
+        <input type="text" id="country" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
+      </div>
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">Sector</label>
+        <select id="sector" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
+          <option value="Medical">Medical</option>
+          <option value="Education">Education</option>
+          <option value="Social Service">Social Service</option>
+          <option value="Others">Others</option>
+        </select>
+      </div>
+      <div>
+        <label class="block font-semibold text-gray-700 mb-1">Website</label>
+        <input type="text" id="website" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
+      </div>
+      <div class="col-span-full">
+        <label class="block font-semibold text-gray-700 mb-1">Briefing</label>
+        <textarea id="briefing" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm"></textarea>
+      </div>
+      <div class="col-span-full">
+        <label class="block font-semibold text-gray-700 mb-1">Logo URL</label>
+        <input type="text" id="logo" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div>
+      <label class="block font-semibold text-gray-700 mb-1">Password</label>
+      <input type="password" id="password" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm" required>
+    </div>
+
+    <!-- Save Button -->
+    <button type="submit" class="btn-primary text-white font-bold py-3 px-6 rounded-xl w-full shadow-lg">Save Changes</button>
+  </form>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
+import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDP01Wi0jp523In30Xk_X83iOigfI6D038",
+  authDomain: "ummahconnect-baf90.firebaseapp.com",
+  projectId: "ummahconnect-baf90",
+  storageBucket: "ummahconnect-baf90.appspot.com",
+  messagingSenderId: "700913218056",
+  appId: "1:700913218056:web:aacfb20f177993275a17bd",
+  measurementId: "G-MHSXKL0V2J"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// Session check
+const userData = JSON.parse(sessionStorage.getItem("user"));
+if(!userData) {
+  alert("❌ Please login first.");
+  window.location.href="login.html";
+}
+
+// Elements
+const profileForm = document.getElementById("profileForm");
+const orgFields = document.getElementById("orgFields");
+
+// Prefill user data
+async function loadProfile() {
+  const userRef = doc(db, "users", userData.id);
+  const userSnap = await getDoc(userRef);
+  if(userSnap.exists()) {
+    const user = userSnap.data();
+    document.getElementById("name").value = user.name || "";
+    document.getElementById("email").value = user.email || "";
+    document.getElementById("password").value = user.password || "";
+    if(user.accountType === "organization") {
+      orgFields.classList.remove("hidden");
+      document.getElementById("orgName").value = user.orgName || "";
+      document.getElementById("country").value = user.country || "";
+      document.getElementById("sector").value = user.sector || "Medical";
+      document.getElementById("website").value = user.website || "";
+      document.getElementById("briefing").value = user.briefing || "";
+      document.getElementById("logo").value = user.logo || "";
+    }
+  }
+}
+loadProfile();
+
+// Save changes
+profileForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const userRef = doc(db, "users", userData.id);
+  const updatedData = {
+    name: document.getElementById("name").value,
+    password: document.getElementById("password").value
+  };
+  if(userData.accountType === "organization") {
+    updatedData.orgName = document.getElementById("orgName").value;
+    updatedData.country = document.getElementById("country").value;
+    updatedData.sector = document.getElementById("sector").value;
+    updatedData.website = document.getElementById("website").value;
+    updatedData.briefing = document.getElementById("briefing").value;
+    updatedData.logo = document.getElementById("logo").value;
+  }
+  await updateDoc(userRef, updatedData);
+  alert("✅ Profile updated successfully!");
+});
+</script>
+
+<script>
+feather.replace();
+const menuBtn = document.getElementById('menuBtn');
+const mobileMenu = document.getElementById('mobileMenu');
+menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  sessionStorage.removeItem("user"); window.location.href="login.html";
+});
+document.getElementById("mobileLogoutBtn").addEventListener("click", () => {
+  sessionStorage.removeItem("user"); window.location.href="login.html";
+});
+</script>
+</body>
+</html>
