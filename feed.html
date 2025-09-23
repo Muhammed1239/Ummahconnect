@@ -12,6 +12,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
     // Firebase Config
     const firebaseConfig = {
@@ -26,11 +27,23 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
 
     const orgContainer = document.getElementById("orgContainer");
     const countryFilter = document.getElementById("countryFilter");
     const sectorFilter = document.getElementById("sectorFilter");
     const searchInput = document.getElementById("searchInput");
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    // Logout functionality
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        window.location.href = "index.html"; // redirect after logout
+      } catch (error) {
+        alert("Error logging out: " + error.message);
+      }
+    });
 
     async function loadOrgs() {
       orgContainer.innerHTML = "";
@@ -83,18 +96,28 @@
     searchInput.addEventListener("input", loadOrgs);
     window.addEventListener("DOMContentLoaded", loadOrgs);
   </script>
+
+  <style>
+    /* For better responsiveness on small screens */
+    @media (max-width: 768px) {
+      nav {
+        flex-direction: column;
+        gap: 2;
+      }
+    }
+  </style>
 </head>
 <body class="bg-gray-100 min-h-screen font-sans">
 
   <!-- Navbar -->
   <header class="bg-white shadow-md sticky top-0 z-50">
-    <div class="container mx-auto flex justify-between items-center py-4 px-6">
+    <div class="container mx-auto flex flex-col md:flex-row justify-between items-center py-4 px-6 gap-2 md:gap-0">
       <h1 class="text-2xl font-bold text-indigo-600">UmmahConnect</h1>
-      <nav class="flex gap-6 items-center">
+      <nav class="flex gap-6 items-center flex-wrap">
         <a href="feed.html" class="text-gray-700 hover:text-indigo-600 transition">Feed</a>
         <a href="discussion.html" class="text-gray-700 hover:text-indigo-600 transition">Discussion</a>
         <a href="profile.html" class="text-gray-700 hover:text-indigo-600 transition">Profile</a>
-        <button onclick="alert('Logging out...');" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500 transition">Logout</button>
+        <button id="logoutBtn" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-500 transition">Logout</button>
       </nav>
     </div>
   </header>
