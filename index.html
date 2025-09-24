@@ -15,6 +15,7 @@
         .nav-link:hover { color: #4F46E5; }
         .card-hover:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.08); }
         .transition-transform { transition: transform 0.3s ease; }
+        .mobile-menu { transition: all 0.3s ease; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -27,7 +28,9 @@
                 </svg>
                 <span class="text-2xl font-bold text-gray-900">UmmahConnect</span>
             </div>
-            <nav class="flex items-center space-x-4 text-gray-600">
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex items-center space-x-4 text-gray-600">
                 <a href="index.html" class="nav-link font-medium text-indigo-600">Home</a>
                 <a href="signup.html" class="nav-link font-medium">Sign Up</a>
                 <a href="login.html" class="nav-link font-medium">Login</a>
@@ -36,6 +39,25 @@
                     Donate Us
                 </a>
             </nav>
+            
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="mobileMenuButton" class="text-gray-700 focus:outline-none">
+                    <i data-feather="more-vertical" class="h-6 w-6"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="mobile-menu hidden md:hidden bg-white py-4 px-4 shadow-md">
+            <div class="flex flex-col space-y-4">
+                <a href="index.html" class="nav-link font-medium text-indigo-600 py-2 border-b border-gray-100">Home</a>
+                <a href="signup.html" class="nav-link font-medium py-2 border-b border-gray-100">Sign Up</a>
+                <a href="login.html" class="nav-link font-medium py-2 border-b border-gray-100">Login</a>
+                <a href="donate.html" class="bg-indigo-600 text-white px-4 py-2 rounded-full font-semibold text-sm hover:bg-indigo-700 transition-colors duration-300 text-center">
+                    Donate Us
+                </a>
+            </div>
         </div>
     </header>
 
@@ -121,6 +143,32 @@
 
 <script>
   feather.replace();
+  
+  // Mobile menu functionality
+  const mobileMenuButton = document.getElementById('mobileMenuButton');
+  const mobileMenu = document.getElementById('mobileMenu');
+  
+  mobileMenuButton.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+  
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', (event) => {
+    const isClickInsideMenu = mobileMenu.contains(event.target);
+    const isClickOnButton = mobileMenuButton.contains(event.target);
+    
+    if (!isClickInsideMenu && !isClickOnButton && !mobileMenu.classList.contains('hidden')) {
+      mobileMenu.classList.add('hidden');
+    }
+  });
+  
+  // Close mobile menu when a link is clicked
+  const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+  mobileMenuLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.add('hidden');
+    });
+  });
 </script>
 </body>
 </html>
