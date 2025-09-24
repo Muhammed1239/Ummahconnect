@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Feed - UmmahConnect</title>
-
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -65,45 +64,70 @@
 
       orgs.forEach(org => {
         const card = document.createElement("div");
-        card.className = "bg-white rounded-lg shadow p-4 hover:scale-105 transition-transform duration-300";
+        card.className = "bg-white rounded-lg shadow p-4 hover:scale-105 transition-transform duration-300 cursor-pointer";
 
-        // Avatar: logo or first letter
+        // Avatar
         const avatar = org.logo
           ? `<img src="${org.logo}" alt="Logo" class="w-16 h-16 rounded-lg object-cover border shadow-sm">`
           : `<div class="w-16 h-16 flex items-center justify-center bg-indigo-200 text-indigo-700 font-bold text-xl rounded-full">${org.orgName.charAt(0)}</div>`;
 
+        // Card inner (no description now)
         card.innerHTML = `
           <div class="flex flex-col items-center gap-3">
             ${avatar}
             <h3 class="text-lg font-semibold text-gray-800 text-center">${org.orgName}</h3>
-            <p class="text-gray-600 text-center text-sm">${org.briefing || '-'}</p>
             <div class="flex gap-2 mt-1 text-xs text-gray-500">
               <span><i class="fa fa-briefcase"></i> ${org.sector}</span>
               <span><i class="fa fa-globe"></i> ${org.country}</span>
             </div>
-            <div class="mt-2 flex gap-2">
-              ${org.website ? `<a href="${org.website}" target="_blank" class="px-3 py-1 bg-indigo-600 text-white rounded text-xs hover:bg-indigo-500 transition">Website</a>` : ""}
-              <button class="px-3 py-1 bg-green-500 text-white rounded text-xs hover:bg-green-400 transition">Contact</button>
-            </div>
           </div>
         `;
+
+        // Click anywhere on card -> open popup
+        card.addEventListener("click", () => openPopup(org));
+
         orgContainer.appendChild(card);
       });
     }
+
+    function openPopup(org) {
+      const popup = document.getElementById("orgPopup");
+      const popupContent = document.getElementById("popupContent");
+
+      popupContent.innerHTML = `
+        <h2 class="text-xl font-bold mb-2">${org.orgName}</h2>
+        <p class="text-sm text-gray-600 mb-4">${org.briefing || "No description available."}</p>
+        <p class="mb-1"><strong>Sector:</strong> ${org.sector}</p>
+        <p class="mb-1"><strong>Country:</strong> ${org.country}</p>
+        <p class="mb-1"><strong>Email:</strong> ${org.email || "Not provided"}</p>
+        <p class="mb-1"><strong>Contact:</strong> ${org.contact || "Not provided"}</p>
+        ${org.website ? `<a href="${org.website}" target="_blank" class="inline-block mt-3 px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-500">Visit Website</a>` : ""}
+      `;
+      popup.classList.remove("hidden");
+    }
+
+    function closePopup() {
+      document.getElementById("orgPopup").classList.add("hidden");
+    }
+
+    // Close when clicking outside
+    window.addEventListener("click", (e) => {
+      const popup = document.getElementById("orgPopup");
+      if (e.target === popup) closePopup();
+    });
 
     countryFilter.addEventListener("input", loadOrgs);
     sectorFilter.addEventListener("input", loadOrgs);
     searchInput.addEventListener("input", loadOrgs);
     window.addEventListener("DOMContentLoaded", loadOrgs);
+
+    window.closePopup = closePopup; // expose for button
   </script>
 
   <style>
     /* For better responsiveness on small screens */
     @media (max-width: 768px) {
-      nav {
-        flex-direction: column;
-        gap: 2;
-      }
+      nav { flex-direction: column; gap: 2; }
     }
   </style>
 </head>
@@ -145,6 +169,14 @@
   <main class="container mx-auto px-6 grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3" id="orgContainer">
     <!-- Cards inserted dynamically from Firebase -->
   </main>
+
+  <!-- Popup -->
+  <div id="orgPopup" class="fixed inset-0 bg-black bg-opacity-50 hidden flex justify-center items-center z-50">
+    <div class="bg-white p-6 rounded-lg w-96 relative">
+      <button onclick="closePopup()" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700">&times;</button>
+      <div id="popupContent"></div>
+    </div>
+  </div>
 
 </body>
 </html>
