@@ -1,130 +1,459 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Login | UmmahConnect</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/feather-icons"></script>
-<style>
-  body { background-color: #F9FAFB; }
-  .fade-in { animation: fadeIn 1s ease forwards; opacity: 0; }
-  @keyframes fadeIn { to { opacity: 1; } }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | UmmahConnect</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    /* Custom styles for enhanced UI */
+    .login-card {
+      transition: all 0.3s ease;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .fade-in { 
+      animation: fadeIn 1s ease forwards; 
+      opacity: 0; 
+    }
+    
+    @keyframes fadeIn { 
+      to { 
+        opacity: 1; 
+      transform: translateY(0); 
+      } 
+    }
+    
+    .slide-up {
+      animation: slideUp 0.8s ease forwards;
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    
+    @keyframes slideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #6366F1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      transition: all 0.3s ease-in-out;
+    }
+    
+    .btn-primary { 
+      background: linear-gradient(to right, #6366F1, #4F46E5);
+      transition: all 0.3s; 
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary:hover { 
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    .input-group {
+      position: relative;
+    }
+    
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9CA3AF;
+      transition: color 0.3s;
+    }
+    
+    input:focus + .input-icon {
+      color: #6366F1;
+    }
+    
+    .floating-label {
+      position: absolute;
+      left: 50px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9CA3AF;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus ~ .floating-label,
+    input:not(:placeholder-shown) ~ .floating-label {
+      top: 0;
+      left: 50px;
+      font-size: 0.75rem;
+      background: white;
+      padding: 0 5px;
+      color: #6366F1;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #9CA3AF;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    
+    .password-toggle:hover {
+      color: #6366F1;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .alert-error {
+      background-color: #FEF2F2;
+      border: 1px solid #FECACA;
+      color: #DC2626;
+    }
+    
+    .alert-success {
+      background-color: #F0FDF4;
+      border: 1px solid #BBF7D0;
+      color: #16A34A;
+    }
+    
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 20px 0;
+    }
+    
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    
+    .divider span {
+      padding: 0 15px;
+      color: #6B7280;
+      font-size: 0.875rem;
+    }
+  </style>
 </head>
-<body class="flex flex-col min-h-screen">
+<body class="bg-gradient-to-br from-indigo-50 to-purple-100 min-h-screen font-sans flex flex-col">
 
-<!-- Navbar -->
-<header class="bg-white shadow-md">
-  <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
-    <a href="index.html" class="text-2xl font-bold text-indigo-600 hover:text-indigo-800">UmmahConnect</a>
-    <nav class="space-x-6 hidden md:flex">
-      <a href="index.html" class="text-gray-700 hover:text-indigo-600 transition">Home</a>
-      <a href="signup.html" class="text-gray-700 hover:text-indigo-600 transition">Sign Up</a>
-      <a href="login.html" class="text-gray-700 hover:text-indigo-600 transition">Login</a>
-    </nav>
-    <div class="md:hidden">
-      <button id="menuBtn" class="text-gray-700 focus:outline-none"><i data-feather="menu"></i></button>
+  <!-- Navbar -->
+  <header class="bg-white shadow-sm">
+    <div class="container mx-auto flex flex-col md:flex-row justify-between items-center py-4 px-6 gap-3 md:gap-0">
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl font-bold text-indigo-600">UmmahConnect</h1>
+      </div>
+      <nav class="flex gap-5 items-center flex-wrap justify-center">
+        <a href="index.html" class="text-gray-600 hover:text-indigo-600 transition">Home</a>
+        <a href="signup.html" class="text-gray-600 hover:text-indigo-600 transition">Sign Up</a>
+        <a href="login.html" class="text-indigo-600 font-medium border-b-2 border-indigo-600 pb-1 transition">Login</a>
+      </nav>
     </div>
-  </div>
-  <div id="mobileMenu" class="hidden flex-col space-y-2 p-4 bg-white shadow-md">
-    <a href="index.html" class="text-gray-700 hover:text-indigo-600 transition block">Home</a>
-    <a href="signup.html" class="text-gray-700 hover:text-indigo-600 transition block">Sign Up</a>
-    <a href="login.html" class="text-gray-700 hover:text-indigo-600 transition block">Login</a>
-  </div>
-</header>
+  </header>
 
-<!-- Login Form -->
-<div class="flex items-center justify-center flex-grow p-6">
-  <div class="w-full max-w-md bg-white rounded-3xl p-8 shadow-xl fade-in">
-    <h2 class="text-3xl font-bold text-center text-indigo-600 mb-6">Welcome Back</h2>
-    <p class="text-center text-gray-500 mb-6">Login to your account to continue connecting.</p>
+  <!-- Main Content -->
+  <main class="flex-grow flex items-center justify-center p-4 md:p-6">
+    <div class="w-full max-w-md login-card bg-white fade-in">
+      <div class="p-8">
+        <!-- Header -->
+        <div class="text-center mb-8 slide-up">
+          <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <i class="fas fa-users text-indigo-600 text-2xl"></i>
+          </div>
+          <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome Back</h2>
+          <p class="text-gray-600">Sign in to your UmmahConnect account</p>
+        </div>
 
-    <form id="loginForm" class="space-y-4">
-      <div>
-        <label class="block mb-1 font-medium text-gray-700">Email</label>
-        <input type="email" id="email" name="email" required class="w-full border border-gray-300 rounded-lg p-2" placeholder="Email Address">
+        <!-- Alert Container -->
+        <div id="alertContainer" class="mb-6"></div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="space-y-6 slide-up" style="animation-delay: 0.2s">
+          <!-- Email Field -->
+          <div class="input-group">
+            <i class="input-icon fas fa-envelope"></i>
+            <input type="email" id="email" name="email" required 
+                   class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500" 
+                   placeholder=" " autocomplete="email">
+            <label class="floating-label">Email Address</label>
+          </div>
+
+          <!-- Password Field -->
+          <div class="input-group">
+            <i class="input-icon fas fa-lock"></i>
+            <input type="password" id="password" name="password" required 
+                   class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500" 
+                   placeholder=" " autocomplete="current-password">
+            <label class="floating-label">Password</label>
+            <span class="password-toggle" id="passwordToggle">
+              <i class="fas fa-eye"></i>
+            </span>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="flex justify-between items-center">
+            <label class="flex items-center text-sm text-gray-600">
+              <input type="checkbox" id="rememberMe" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500 mr-2">
+              Remember me
+            </label>
+            <a href="forgot-password.html" class="text-sm text-indigo-600 hover:text-indigo-500 transition">Forgot password?</a>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" id="loginBtn" class="btn-primary text-white font-medium py-3 px-4 rounded-lg w-full shadow-lg flex items-center justify-center gap-2">
+            <i class="fas fa-sign-in-alt"></i> Sign In
+          </button>
+        </form>
+
+        <!-- Divider -->
+        <div class="divider slide-up" style="animation-delay: 0.4s">
+          <span>Or continue with</span>
+        </div>
+
+        <!-- Social Login (Placeholder) -->
+        <div class="grid grid-cols-2 gap-3 slide-up" style="animation-delay: 0.5s">
+          <button class="flex items-center justify-center gap-2 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+            <i class="fab fa-google text-red-500"></i>
+            <span class="text-sm font-medium">Google</span>
+          </button>
+          <button class="flex items-center justify-center gap-2 py-2.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition">
+            <i class="fab fa-facebook text-blue-600"></i>
+            <span class="text-sm font-medium">Facebook</span>
+          </button>
+        </div>
+
+        <!-- Sign Up Link -->
+        <div class="text-center mt-6 slide-up" style="animation-delay: 0.6s">
+          <p class="text-gray-600">
+            Don't have an account? 
+            <a href="signup.html" class="text-indigo-600 hover:text-indigo-500 font-semibold transition">Sign up now</a>
+          </p>
+        </div>
       </div>
-
-      <div>
-        <label class="block mb-1 font-medium text-gray-700">Password</label>
-        <input type="password" id="password" name="password" required class="w-full border border-gray-300 rounded-lg p-2" placeholder="Password">
+      
+      <!-- Footer Note -->
+      <div class="bg-gray-50 px-8 py-4 text-center border-t border-gray-200">
+        <p class="text-xs text-gray-500">By signing in, you agree to our <a href="#" class="text-indigo-600 hover:underline">Terms of Service</a> and <a href="#" class="text-indigo-600 hover:underline">Privacy Policy</a>.</p>
       </div>
+    </div>
+  </main>
 
-      <button type="submit" class="w-full py-3 rounded-xl font-bold bg-indigo-600 hover:bg-indigo-800 text-white transition transform hover:scale-105 shadow">
-        Login
-      </button>
-    </form>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, setPersistence, browserSessionPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-    <p class="text-center text-gray-500 mt-4">
-      Don't have an account? <a href="signup.html" class="text-indigo-600 hover:text-indigo-800 font-semibold">Sign Up</a>
-    </p>
-  </div>
-</div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDP01Wi0jp523In30Xk_X83iOigfI6D038",
+      authDomain: "ummahconnect-baf90.firebaseapp.com",
+      projectId: "ummahconnect-baf90",
+      storageBucket: "ummahconnect-baf90.appspot.com",
+      messagingSenderId: "700913218056",
+      appId: "1:700913218056:web:aacfb20f177993275a17bd",
+      measurementId: "G-MHSXKL0V2J"
+    };
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-auth.js";
-import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDP01Wi0jp523In30Xk_X83iOigfI6D038",
-  authDomain: "ummahconnect-baf90.firebaseapp.com",
-  projectId: "ummahconnect-baf90",
-  storageBucket: "ummahconnect-baf90.firebasestorage.app",
-  messagingSenderId: "700913218056",
-  appId: "1:700913218056:web:aacfb20f177993275a17bd",
-  measurementId: "G-MHSXKL0V2J"
-};
+    // DOM Elements
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const passwordToggle = document.getElementById('passwordToggle');
+    const alertContainer = document.getElementById('alertContainer');
+    const rememberMe = document.getElementById('rememberMe');
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+    // Password toggle functionality
+    passwordToggle.addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const icon = this.querySelector('i');
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
 
-const form = document.getElementById('loginForm');
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = form.email.value;
-  const password = form.password.value;
+    // Show alert function
+    function showAlert(message, type = 'error') {
+      alertContainer.innerHTML = `
+        <div class="alert alert-${type}">
+          <i class="fas ${type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}"></i>
+          <span>${message}</span>
+        </div>
+      `;
+      
+      // Auto-hide success alerts after 3 seconds
+      if (type === 'success') {
+        setTimeout(() => {
+          alertContainer.innerHTML = '';
+        }, 3000);
+      }
+    }
 
-  try {
-    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-    const user = userCredential.user;
+    // Clear alert function
+    function clearAlert() {
+      alertContainer.innerHTML = '';
+    }
 
-    // Fetch user data from Firestore
-    const docRef = doc(db, "users", user.uid);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      const userData = docSnap.data();
-
-      // Check organization approval
-      if(userData.accountType === "organization" && !userData.approved) {
-        alert("❌ Your organization is not approved by admin yet.");
+    // Login form submission
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      clearAlert();
+      
+      const email = loginForm.email.value.trim();
+      const password = loginForm.password.value;
+      
+      // Basic validation
+      if (!email || !password) {
+        showAlert('Please fill in all fields');
         return;
       }
+      
+      try {
+        // Set persistence based on "Remember me" selection
+        const persistence = rememberMe.checked ? browserLocalPersistence : browserSessionPersistence;
+        await setPersistence(auth, persistence);
+        
+        // Show loading state
+        loginBtn.innerHTML = '<span class="loading-spinner"></span> Signing In...';
+        loginBtn.disabled = true;
+        
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-      // Save to session storage
-      sessionStorage.setItem("user", JSON.stringify(userData));
-      alert("✅ Login successful!");
+        // Fetch user data from Firestore
+        const docRef = doc(db, "users", user.uid);
+        const docSnap = await getDoc(docRef);
 
-      // Redirect to feed page
-      window.location.href = "feed.html";
-    } else {
-      alert("❌ User data not found.");
-    }
-  } catch (error) {
-    alert("❌ Error: " + error.message);
-  }
-});
-</script>
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
 
-<script>
-  feather.replace();
-  const menuBtn = document.getElementById('menuBtn');
-  const mobileMenu = document.getElementById('mobileMenu');
-  menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
-</script>
+          // Check organization approval
+          if (userData.accountType === "organization" && !userData.approved) {
+            showAlert('Your organization account is pending approval. Please wait for admin approval or contact support.');
+            
+            // Restore button state
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            loginBtn.disabled = false;
+            return;
+          }
 
+          // Save to session storage
+          sessionStorage.setItem("user", JSON.stringify({
+            ...userData,
+            id: user.uid
+          }));
+          
+          showAlert('Login successful! Redirecting...', 'success');
+          
+          // Redirect to feed page after a short delay
+          setTimeout(() => {
+            window.location.href = "feed.html";
+          }, 1500);
+        } else {
+          showAlert('User data not found. Please contact support.');
+          
+          // Restore button state
+          loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+          loginBtn.disabled = false;
+        }
+      } catch (error) {
+        console.error("Login error:", error);
+        
+        // Handle specific error cases
+        let errorMessage = "An error occurred during login. Please try again.";
+        
+        switch (error.code) {
+          case 'auth/invalid-email':
+            errorMessage = "Invalid email address format.";
+            break;
+          case 'auth/user-disabled':
+            errorMessage = "This account has been disabled. Please contact support.";
+            break;
+          case 'auth/user-not-found':
+            errorMessage = "No account found with this email address.";
+            break;
+          case 'auth/wrong-password':
+            errorMessage = "Incorrect password. Please try again.";
+            break;
+          case 'auth/too-many-requests':
+            errorMessage = "Too many failed login attempts. Please try again later.";
+            break;
+          default:
+            errorMessage = error.message;
+        }
+        
+        showAlert(errorMessage);
+        
+        // Restore button state
+        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+        loginBtn.disabled = false;
+      }
+    });
+
+    // Clear alert when user starts typing
+    loginForm.email.addEventListener('input', clearAlert);
+    loginForm.password.addEventListener('input', clearAlert);
+
+    // Auto-focus on email field when page loads
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('email').focus();
+    });
+  </script>
 </body>
 </html>
