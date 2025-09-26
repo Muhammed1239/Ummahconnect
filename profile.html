@@ -1,191 +1,581 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profile | UmmahConnect</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/feather-icons"></script>
-<style>
-  body { background-color: #F3F4F6; font-family: 'Inter', sans-serif; }
-  .fade-slide { opacity: 0; transform: translateY(20px); animation: fadeSlideIn 0.8s forwards; }
-  @keyframes fadeSlideIn { to { opacity: 1; transform: translateY(0); } }
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: #6366F1;
-    box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
-    transition: all 0.3s ease-in-out;
-  }
-  .btn-primary { background-color: #6366F1; transition: all 0.3s; }
-  .btn-primary:hover { background-color: #4F46E5; transform: translateY(-2px); }
-</style>
-</head>
-<body class="flex flex-col min-h-screen">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile | UmmahConnect</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-<!-- Navbar -->
-<header class="bg-white shadow-md">
-  <div class="max-w-7xl mx-auto flex justify-between items-center p-4">
-    <a href="feed.html" class="text-2xl font-bold text-indigo-600 hover:text-indigo-800">UmmahConnect</a>
-    <nav class="space-x-6 hidden md:flex">
-      <a href="feed.html" class="text-gray-700 hover:text-indigo-600 transition">Feed</a>
-      <a href="discussion.html" class="text-gray-700 hover:text-indigo-600 transition">Discussion</a>
-      <a href="profile.html" class="text-gray-700 hover:text-indigo-600 transition font-semibold">Profile</a>
-      <button id="logoutBtn" class="text-gray-700 hover:text-red-500 transition">Logout</button>
-    </nav>
-    <div class="md:hidden">
-      <button id="menuBtn" class="text-gray-700 focus:outline-none"><i data-feather="menu"></i></button>
-    </div>
-  </div>
-  <div id="mobileMenu" class="hidden flex-col space-y-2 p-4 bg-white shadow-md">
-    <a href="feed.html" class="text-gray-700 hover:text-indigo-600 transition block">Feed</a>
-    <a href="discussion.html" class="text-gray-700 hover:text-indigo-600 transition block">Discussion</a>
-    <a href="profile.html" class="text-gray-700 hover:text-indigo-600 transition block font-semibold">Profile</a>
-    <button id="mobileLogoutBtn" class="text-gray-700 hover:text-red-500 transition block text-left">Logout</button>
-  </div>
-</header>
-
-<!-- Profile Form -->
-<div class="flex-grow max-w-4xl mx-auto p-6 fade-slide">
-  <h1 class="text-4xl font-bold text-indigo-600 mb-8 text-center">My Profile</h1>
-  <form id="profileForm" class="bg-white p-8 rounded-3xl shadow-xl space-y-6 transition-all duration-500">
-    
-    <!-- Name & Email -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <label class="block font-semibold text-gray-700 mb-1">Name</label>
-        <input type="text" id="name" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm focus:ring-1 focus:ring-indigo-500" required>
-      </div>
-      <div>
-        <label class="block font-semibold text-gray-700 mb-1">Email</label>
-        <input type="email" id="email" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm bg-gray-100" required disabled>
-      </div>
-    </div>
-
-    <!-- Organization Fields -->
-    <div id="orgFields" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <label class="block font-semibold text-gray-700 mb-1">Organization Name</label>
-        <input type="text" id="orgName" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
-      </div>
-      <div>
-        <label class="block font-semibold text-gray-700 mb-1">Country</label>
-        <input type="text" id="country" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
-      </div>
-      <div>
-        <label class="block font-semibold text-gray-700 mb-1">Sector</label>
-        <select id="sector" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
-          <option value="Medical">Medical</option>
-          <option value="Education">Education</option>
-          <option value="Social Service">Social Service</option>
-          <option value="Others">Others</option>
-        </select>
-      </div>
-      <div>
-        <label class="block font-semibold text-gray-700 mb-1">Website</label>
-        <input type="text" id="website" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
-      </div>
-      <div class="col-span-full">
-        <label class="block font-semibold text-gray-700 mb-1">Briefing</label>
-        <textarea id="briefing" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm"></textarea>
-      </div>
-      <div class="col-span-full">
-        <label class="block font-semibold text-gray-700 mb-1">Logo URL</label>
-        <input type="text" id="logo" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm">
-      </div>
-    </div>
-
-    <!-- Password -->
-    <div>
-      <label class="block font-semibold text-gray-700 mb-1">Password</label>
-      <input type="password" id="password" class="border border-gray-300 rounded-xl w-full p-3 shadow-sm" required>
-    </div>
-
-    <!-- Save Button -->
-    <button type="submit" class="btn-primary text-white font-bold py-3 px-6 rounded-xl w-full shadow-lg">Save Changes</button>
-  </form>
-</div>
-
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js";
-import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDP01Wi0jp523In30Xk_X83iOigfI6D038",
-  authDomain: "ummahconnect-baf90.firebaseapp.com",
-  projectId: "ummahconnect-baf90",
-  storageBucket: "ummahconnect-baf90.appspot.com",
-  messagingSenderId: "700913218056",
-  appId: "1:700913218056:web:aacfb20f177993275a17bd",
-  measurementId: "G-MHSXKL0V2J"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Session check
-const userData = JSON.parse(sessionStorage.getItem("user"));
-if(!userData) {
-  alert("❌ Please login first.");
-  window.location.href="login.html";
-}
-
-// Elements
-const profileForm = document.getElementById("profileForm");
-const orgFields = document.getElementById("orgFields");
-
-// Prefill user data
-async function loadProfile() {
-  const userRef = doc(db, "users", userData.id);
-  const userSnap = await getDoc(userRef);
-  if(userSnap.exists()) {
-    const user = userSnap.data();
-    document.getElementById("name").value = user.name || "";
-    document.getElementById("email").value = user.email || "";
-    document.getElementById("password").value = user.password || "";
-    if(user.accountType === "organization") {
-      orgFields.classList.remove("hidden");
-      document.getElementById("orgName").value = user.orgName || "";
-      document.getElementById("country").value = user.country || "";
-      document.getElementById("sector").value = user.sector || "Medical";
-      document.getElementById("website").value = user.website || "";
-      document.getElementById("briefing").value = user.briefing || "";
-      document.getElementById("logo").value = user.logo || "";
+  <style>
+    /* Custom styles for enhanced UI */
+    .profile-card {
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      overflow: hidden;
     }
-  }
-}
-loadProfile();
+    
+    .profile-section {
+      background: linear-gradient(to right, #f8fafc, #f1f5f9);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .loading-spinner {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(79, 70, 229, 0.3);
+      border-radius: 50%;
+      border-top-color: #4f46e5;
+      animation: spin 1s ease-in-out infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    .section-title {
+      position: relative;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .section-title:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 50px;
+      height: 3px;
+      background-color: #4f46e5;
+      border-radius: 3px;
+    }
+    
+    .fade-slide { 
+      opacity: 0; 
+      transform: translateY(20px); 
+      animation: fadeSlideIn 0.8s forwards; 
+    }
+    
+    @keyframes fadeSlideIn { 
+      to { 
+        opacity: 1; 
+        transform: translateY(0); 
+      } 
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #6366F1;
+      box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
+      transition: all 0.3s ease-in-out;
+    }
+    
+    .btn-primary { 
+      background-color: #6366F1; 
+      transition: all 0.3s; 
+    }
+    
+    .btn-primary:hover { 
+      background-color: #4F46E5; 
+      transform: translateY(-2px); 
+    }
+    
+    .tab-button {
+      transition: all 0.3s;
+      border-bottom: 2px solid transparent;
+    }
+    
+    .tab-button.active {
+      border-bottom-color: #4f46e5;
+      color: #4f46e5;
+    }
+    
+    .account-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+    
+    .account-type-badge.organization {
+      background-color: #e0e7ff;
+      color: #3730a3;
+    }
+    
+    .account-type-badge.user {
+      background-color: #f0f9ff;
+      color: #0c4a6e;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
 
-// Save changes
-profileForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const userRef = doc(db, "users", userData.id);
-  const updatedData = {
-    name: document.getElementById("name").value,
-    password: document.getElementById("password").value
-  };
-  if(userData.accountType === "organization") {
-    updatedData.orgName = document.getElementById("orgName").value;
-    updatedData.country = document.getElementById("country").value;
-    updatedData.sector = document.getElementById("sector").value;
-    updatedData.website = document.getElementById("website").value;
-    updatedData.briefing = document.getElementById("briefing").value;
-    updatedData.logo = document.getElementById("logo").value;
-  }
-  await updateDoc(userRef, updatedData);
-  alert("✅ Profile updated successfully!");
-});
-</script>
+  <!-- Navbar -->
+  <header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto flex flex-col md:flex-row justify-between items-center py-4 px-6 gap-3 md:gap-0">
+      <div class="flex items-center gap-2">
+        <h1 class="text-2xl font-bold text-indigo-600">UmmahConnect</h1>
+        <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded-full font-medium">Profile</span>
+      </div>
+      <nav class="flex gap-5 items-center flex-wrap justify-center">
+        <a href="feed.html" class="text-gray-600 hover:text-indigo-600 transition">Feed</a>
+        <a href="discussion.html" class="text-gray-600 hover:text-indigo-600 transition">Discussion</a>
+        <a href="profile.html" class="text-indigo-600 font-medium border-b-2 border-indigo-600 pb-1 transition">Profile</a>
+        <button id="logoutBtn" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-500 transition flex items-center gap-2">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+      </nav>
+    </div>
+  </header>
 
-<script>
-feather.replace();
-const menuBtn = document.getElementById('menuBtn');
-const mobileMenu = document.getElementById('mobileMenu');
-menuBtn.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
-document.getElementById("logoutBtn").addEventListener("click", () => {
-  sessionStorage.removeItem("user"); window.location.href="login.html";
-});
-document.getElementById("mobileLogoutBtn").addEventListener("click", () => {
-  sessionStorage.removeItem("user"); window.location.href="login.html";
-});
-</script>
+  <!-- Main Content -->
+  <main class="container mx-auto my-8 px-4 md:px-6 fade-slide">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-gray-800 mb-2">My Profile</h1>
+      <p class="text-gray-600">Manage your account information and preferences</p>
+    </div>
+
+    <!-- Profile Form -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <!-- Left Column - Profile Overview -->
+      <div class="lg:col-span-1">
+        <div class="profile-card bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24">
+          <div class="flex flex-col items-center text-center mb-6">
+            <!-- Profile Avatar -->
+            <div id="profileAvatar" class="w-24 h-24 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-3xl font-bold mb-4 border-4 border-white shadow-lg">
+              <!-- Avatar will be set dynamically -->
+            </div>
+            
+            <!-- Profile Info -->
+            <h2 id="profileName" class="text-xl font-bold text-gray-800 mb-1">Loading...</h2>
+            <p id="profileEmail" class="text-gray-600 text-sm mb-3">Loading...</p>
+            <div id="accountTypeBadge" class="account-type-badge mb-4">
+              <!-- Account type badge will be set dynamically -->
+            </div>
+            
+            <!-- Account Stats -->
+            <div class="grid grid-cols-2 gap-4 w-full mt-4 pt-4 border-t border-gray-100">
+              <div class="text-center">
+                <p class="text-2xl font-bold text-indigo-600">12</p>
+                <p class="text-xs text-gray-500">Posts</p>
+              </div>
+              <div class="text-center">
+                <p class="text-2xl font-bold text-indigo-600">47</p>
+                <p class="text-xs text-gray-500">Connections</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Profile Form -->
+      <div class="lg:col-span-2">
+        <div class="profile-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <!-- Tabs -->
+          <div class="border-b border-gray-200">
+            <div class="flex">
+              <button id="personalTab" class="tab-button flex-1 py-4 text-center font-medium text-gray-600 active">
+                <i class="fas fa-user mr-2"></i>Personal Info
+              </button>
+              <button id="organizationTab" class="tab-button flex-1 py-4 text-center font-medium text-gray-600 hidden">
+                <i class="fas fa-building mr-2"></i>Organization Info
+              </button>
+              <button id="securityTab" class="tab-button flex-1 py-4 text-center font-medium text-gray-600">
+                <i class="fas fa-shield-alt mr-2"></i>Security
+              </button>
+            </div>
+          </div>
+
+          <!-- Tab Content -->
+          <div class="p-6">
+            <form id="profileForm">
+              <!-- Personal Info Tab -->
+              <div id="personalContent" class="tab-content space-y-6">
+                <h3 class="section-title text-lg font-semibold text-gray-800">Personal Information</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <div class="relative">
+                      <i class="fas fa-user absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input type="text" id="name" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500" required>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <div class="relative">
+                      <i class="fas fa-envelope absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input type="email" id="email" class="pl-10 w-full p-3 border border-gray-300 rounded-lg bg-gray-100" disabled>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <label for="bio" class="block text-sm font-medium text-gray-700 mb-2">Bio</label>
+                  <textarea id="bio" rows="3" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500" placeholder="Tell us a bit about yourself..."></textarea>
+                </div>
+              </div>
+
+              <!-- Organization Info Tab -->
+              <div id="organizationContent" class="tab-content space-y-6 hidden">
+                <h3 class="section-title text-lg font-semibold text-gray-800">Organization Information</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label for="orgName" class="block text-sm font-medium text-gray-700 mb-2">Organization Name</label>
+                    <div class="relative">
+                      <i class="fas fa-building absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input type="text" id="orgName" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500">
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label for="country" class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+                    <div class="relative">
+                      <i class="fas fa-globe absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input type="text" id="country" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500">
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label for="sector" class="block text-sm font-medium text-gray-700 mb-2">Sector</label>
+                    <div class="relative">
+                      <i class="fas fa-briefcase absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <select id="sector" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500 appearance-none">
+                        <option value="Medical">Medical</option>
+                        <option value="Education">Education</option>
+                        <option value="Social Service">Social Service</option>
+                        <option value="Others">Others</option>
+                      </select>
+                      <i class="fas fa-chevron-down absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label for="website" class="block text-sm font-medium text-gray-700 mb-2">Website</label>
+                    <div class="relative">
+                      <i class="fas fa-link absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input type="text" id="website" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500" placeholder="https://example.com">
+                    </div>
+                  </div>
+                  
+                  <div class="md:col-span-2">
+                    <label for="briefing" class="block text-sm font-medium text-gray-700 mb-2">Organization Briefing</label>
+                    <textarea id="briefing" rows="4" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500" placeholder="Describe your organization's mission and activities..."></textarea>
+                  </div>
+                  
+                  <div class="md:col-span-2">
+                    <label for="logo" class="block text-sm font-medium text-gray-700 mb-2">Logo URL</label>
+                    <div class="relative">
+                      <i class="fas fa-image absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input type="text" id="logo" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500" placeholder="https://example.com/logo.png">
+                    </div>
+                    <p class="text-xs text-gray-500 mt-1">Paste the URL of your organization's logo image</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Security Tab -->
+              <div id="securityContent" class="tab-content space-y-6 hidden">
+                <h3 class="section-title text-lg font-semibold text-gray-800">Security Settings</h3>
+                
+                <div>
+                  <label for="currentPassword" class="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                  <div class="relative">
+                    <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                    <input type="password" id="currentPassword" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500">
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label for="newPassword" class="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                    <div class="relative">
+                      <i class="fas fa-key absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input type="password" id="newPassword" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500">
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <label for="confirmPassword" class="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                    <div class="relative">
+                      <i class="fas fa-key absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      <input type="password" id="confirmPassword" class="pl-10 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-200 focus:border-indigo-500">
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                  <div class="flex">
+                    <div class="flex-shrink-0">
+                      <i class="fas fa-exclamation-triangle text-yellow-400 mt-0.5"></i>
+                    </div>
+                    <div class="ml-3">
+                      <h3 class="text-sm font-medium text-yellow-800">Password Requirements</h3>
+                      <div class="mt-2 text-sm text-yellow-700">
+                        <p>Your password should be at least 8 characters long and include a mix of letters, numbers, and symbols.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="flex flex-col sm:flex-row gap-3 pt-6 mt-6 border-t border-gray-200">
+                <button type="submit" class="btn-primary text-white font-medium py-3 px-6 rounded-lg flex items-center justify-center gap-2 shadow-lg flex-1">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+                <button type="button" id="cancelBtn" class="bg-gray-200 text-gray-700 font-medium py-3 px-6 rounded-lg hover:bg-gray-300 transition flex items-center justify-center gap-2 flex-1">
+                  <i class="fas fa-times"></i> Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    import { getAuth, signOut, updatePassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDP01Wi0jp523In30Xk_X83iOigfI6D038",
+      authDomain: "ummahconnect-baf90.firebaseapp.com",
+      projectId: "ummahconnect-baf90",
+      storageBucket: "ummahconnect-baf90.appspot.com",
+      messagingSenderId: "700913218056",
+      appId: "1:700913218056:web:aacfb20f177993275a17bd",
+      measurementId: "G-MHSXKL0V2J"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    // Session check
+    const userData = JSON.parse(sessionStorage.getItem("user"));
+    if(!userData) {
+      alert("❌ Please login first.");
+      window.location.href = "login.html";
+    }
+
+    // Elements
+    const profileForm = document.getElementById("profileForm");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    
+    // Tab elements
+    const personalTab = document.getElementById("personalTab");
+    const organizationTab = document.getElementById("organizationTab");
+    const securityTab = document.getElementById("securityTab");
+    const personalContent = document.getElementById("personalContent");
+    const organizationContent = document.getElementById("organizationContent");
+    const securityContent = document.getElementById("securityContent");
+
+    // Profile overview elements
+    const profileAvatar = document.getElementById("profileAvatar");
+    const profileName = document.getElementById("profileName");
+    const profileEmail = document.getElementById("profileEmail");
+    const accountTypeBadge = document.getElementById("accountTypeBadge");
+
+    // Tab switching functionality
+    personalTab.addEventListener("click", () => switchTab("personal"));
+    organizationTab.addEventListener("click", () => switchTab("organization"));
+    securityTab.addEventListener("click", () => switchTab("security"));
+
+    function switchTab(tabName) {
+      // Remove active class from all tabs
+      personalTab.classList.remove("active");
+      organizationTab.classList.remove("active");
+      securityTab.classList.remove("active");
+      
+      // Hide all content
+      personalContent.classList.add("hidden");
+      organizationContent.classList.add("hidden");
+      securityContent.classList.add("hidden");
+      
+      // Activate selected tab and show its content
+      if (tabName === "personal") {
+        personalTab.classList.add("active");
+        personalContent.classList.remove("hidden");
+      } else if (tabName === "organization") {
+        organizationTab.classList.add("active");
+        organizationContent.classList.remove("hidden");
+      } else if (tabName === "security") {
+        securityTab.classList.add("active");
+        securityContent.classList.remove("hidden");
+      }
+    }
+
+    // Cancel button functionality
+    cancelBtn.addEventListener("click", () => {
+      if (confirm("Are you sure you want to discard your changes?")) {
+        loadProfile(); // Reload original data
+      }
+    });
+
+    // Logout functionality
+    logoutBtn.addEventListener("click", async () => {
+      try {
+        logoutBtn.innerHTML = '<span class="loading-spinner"></span> Logging out...';
+        logoutBtn.disabled = true;
+        await signOut(auth);
+        sessionStorage.removeItem("user");
+        window.location.href = "login.html";
+      } catch (error) {
+        alert("Error logging out: " + error.message);
+        logoutBtn.innerHTML = '<i class="fas fa-sign-out-alt"></i> Logout';
+        logoutBtn.disabled = false;
+      }
+    });
+
+    // Prefill user data
+    async function loadProfile() {
+      try {
+        const userRef = doc(db, "users", userData.id);
+        const userSnap = await getDoc(userRef);
+        
+        if (userSnap.exists()) {
+          const user = userSnap.data();
+          
+          // Update profile overview
+          profileName.textContent = user.name || "User";
+          profileEmail.textContent = user.email || "No email";
+          
+          // Set avatar
+          if (user.logo && user.accountType === "organization") {
+            profileAvatar.innerHTML = `<img src="${user.logo}" alt="Logo" class="w-full h-full rounded-full object-cover">`;
+          } else {
+            const initial = user.name ? user.name.charAt(0).toUpperCase() : "U";
+            profileAvatar.textContent = initial;
+          }
+          
+          // Set account type badge
+          if (user.accountType === "organization") {
+            accountTypeBadge.className = "account-type-badge organization";
+            accountTypeBadge.innerHTML = `<i class="fas fa-building"></i> Organization`;
+            organizationTab.classList.remove("hidden");
+          } else {
+            accountTypeBadge.className = "account-type-badge user";
+            accountTypeBadge.innerHTML = `<i class="fas fa-user"></i> Community Member`;
+            organizationTab.classList.add("hidden");
+          }
+          
+          // Fill form fields
+          document.getElementById("name").value = user.name || "";
+          document.getElementById("email").value = user.email || "";
+          document.getElementById("bio").value = user.bio || "";
+          
+          if (user.accountType === "organization") {
+            document.getElementById("orgName").value = user.orgName || "";
+            document.getElementById("country").value = user.country || "";
+            document.getElementById("sector").value = user.sector || "Medical";
+            document.getElementById("website").value = user.website || "";
+            document.getElementById("briefing").value = user.briefing || "";
+            document.getElementById("logo").value = user.logo || "";
+          }
+        } else {
+          alert("User data not found!");
+        }
+      } catch (error) {
+        console.error("Error loading profile:", error);
+        alert("Error loading profile data: " + error.message);
+      }
+    }
+
+    // Save changes
+    profileForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      try {
+        const userRef = doc(db, "users", userData.id);
+        const updatedData = {
+          name: document.getElementById("name").value,
+          bio: document.getElementById("bio").value
+        };
+        
+        // Add organization data if applicable
+        if (userData.accountType === "organization") {
+          updatedData.orgName = document.getElementById("orgName").value;
+          updatedData.country = document.getElementById("country").value;
+          updatedData.sector = document.getElementById("sector").value;
+          updatedData.website = document.getElementById("website").value;
+          updatedData.briefing = document.getElementById("briefing").value;
+          updatedData.logo = document.getElementById("logo").value;
+        }
+        
+        // Handle password change if provided
+        const currentPassword = document.getElementById("currentPassword").value;
+        const newPassword = document.getElementById("newPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+        
+        if (newPassword) {
+          if (newPassword !== confirmPassword) {
+            alert("New passwords do not match!");
+            return;
+          }
+          
+          if (newPassword.length < 6) {
+            alert("Password should be at least 6 characters long!");
+            return;
+          }
+          
+          // In a real app, you would verify current password first
+          // Then update password using Firebase Auth
+          try {
+            const user = auth.currentUser;
+            await updatePassword(user, newPassword);
+            alert("Password updated successfully!");
+          } catch (error) {
+            alert("Error updating password: " + error.message);
+            return;
+          }
+        }
+        
+        // Show loading state
+        const submitBtn = profileForm.querySelector('button[type="submit"]');
+        const originalText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<span class="loading-spinner"></span> Saving...';
+        submitBtn.disabled = true;
+        
+        await updateDoc(userRef, updatedData);
+        
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        // Reload profile to reflect changes
+        await loadProfile();
+        
+        alert("✅ Profile updated successfully!");
+      } catch (error) {
+        console.error("Error updating profile:", error);
+        alert("Error updating profile: " + error.message);
+        
+        // Restore button state on error
+        const submitBtn = profileForm.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+        submitBtn.disabled = false;
+      }
+    });
+
+    // Initialize page
+    window.addEventListener("DOMContentLoaded", () => {
+      loadProfile();
+    });
+  </script>
 </body>
 </html>
